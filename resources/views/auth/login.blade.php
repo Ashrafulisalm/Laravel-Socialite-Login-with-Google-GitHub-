@@ -11,8 +11,8 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div style="text-align: center; margin-bottom: 20px;">
-                            <a href="/login/google">Login with Google</a>
-                            <a href="/login/github">Login with GitHub</a>
+                            <a class="btn btn-danger" href="/login/google">Login with Google</a>
+                            <a class="btn btn-primary" href="/login/github">Login with GitHub</a>
                         </div>
 
                         <div class="form-group row">

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 use Socialite;
 
 use App\Http\Controllers\Controller;
@@ -53,8 +55,29 @@ class LoginController extends Controller
      */
     public function handleProviderCallback($website)
     {
-        $user = Socialite::driver($website)->stateless()->user();
+        if ($website=='google'){
+            $user = Socialite::driver($website)->stateless()->user();
+        } else {
+            $user = Socialite::driver($website)->user();
+        }
 
-        return $user->getName();
+        //If registered already then get the user
+        $is_user=User::where('email',$user->getEmail())->first();
+        if ($is_user){
+            Auth::login($is_user);
+            return redirect('/');
+        } else {
+            //Create a new user by getting data by API
+            $new_user=new User;
+            $new_user->name=$user->getName();
+            $new_user->email=$user->getEmail();
+            $new_user->password=bcrypt($user->getEmail());
+
+            if($new_user->save()){
+                Auth::login($new_user);
+                return redirect('/');
+            }
+        }
+
     }
 }
